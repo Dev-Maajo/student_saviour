@@ -1,0 +1,13 @@
+PyPDF2
+email_validator
+flask
+jinja2
+markdown
+matplotlib
+numpy
+openai
+pandas
+python-dotenv
+reportlab
+requests
+scikit-learn
