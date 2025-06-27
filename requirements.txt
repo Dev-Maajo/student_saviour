@@ -12,3 +12,4 @@ reportlab
 requests
 scikit-learn
 gunicorn
+gpt4all
