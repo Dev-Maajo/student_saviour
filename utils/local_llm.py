@@ -5,7 +5,7 @@ import time
 import os
 
 # ✅ Path to your GGUF model
-model_path = os.path.join("models", "Meta-Llama-3-8B-Instruct.Q4_0.gguf")
+model_path = "models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 
 # Check model existence
 if not os.path.exists(model_path):
