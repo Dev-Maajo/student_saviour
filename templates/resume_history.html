@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Upload History</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        table {
+            width: 90%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            padding: 12px 18px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #2d3748;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📜 Resume Upload History</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Score</th>
+                <th>Feedback</th>
+                <th>Uploaded At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resumes %}
+            <tr>
+                <td>{{ r[0] }}</td>
+                <td>{{ r[1] }}</td>
+                <td>{{ r[2] }}</td>
+                <td>{{ r[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

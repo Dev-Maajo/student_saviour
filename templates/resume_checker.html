@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Checker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 py-10 px-4">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+    <h1 class="text-2xl font-bold text-center mb-4">📄 Upload Your Resume (PDF)</h1>
+    
+    <form action="/result" method="POST" enctype="multipart/form-data">
+      <input type="file" name="resume_file" accept=".pdf" required class="block w-full border p-2 rounded" />
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded w-full">Analyze Resume</button>
+    </form>
+  </div>
+</body>
+</html>

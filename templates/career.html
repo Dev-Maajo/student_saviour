@@ -1,0 +1,96 @@
+<!-- templates/career.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Career Guidance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-white text-center py-20 px-4 font-sans">
+  <h1 class="text-3xl font-bold text-blue-600 mb-4">🎯 Career Guidance</h1>
+  <p class="text-gray-600 mb-6">We’ll help you choose the right career path based on your background and interests.</p>
+
+  <!-- 🔹 Suggested Prompts -->
+  <div class="max-w-xl mx-auto mb-6">
+    <p class="text-sm text-gray-600 mb-2">Try one of these popular queries:</p>
+    <div class="flex flex-wrap gap-2 justify-center">
+      {% for topic in ["Career in Data Science", "Govt jobs after 12th", "Best courses after B.Com", "Remote tech jobs", "Study abroad after engineering"] %}
+      <button type="button"
+        class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition"
+        onclick="document.getElementById('career_query').value='{{ topic }}'">
+        {{ topic }}
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 🔍 Input Form -->
+  <form method="POST" action="/career-advice" class="max-w-xl mx-auto text-left space-y-4">
+    <label for="career_query" class="block text-lg font-medium text-gray-700">Enter your career-related question:</label>
+    <textarea id="career_query" name="career_query" rows="4" required
+      class="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-400"
+      placeholder="Example: I am pursuing B.Com. Should I go for an MBA or take a job?"></textarea>
+
+    <button id="submitBtn" type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200">
+      🔍 Get Career Advice
+    </button>
+
+    <p id="loading-text" class="text-blue-500 mt-2 hidden">⏳ Generating AI advice...</p>
+  </form>
+
+  <!-- ✅ AI Response -->
+  {% if advice %}
+    <div id="ai-advice" class="fade-in mt-10 max-w-2xl mx-auto p-6 bg-green-50 border-l-4 border-green-400 rounded-xl shadow-md transition-all duration-300">
+      <h2 class="text-xl font-semibold text-green-800 mb-2">🧠 AI Career Advice:</h2>
+      <p class="text-gray-800 whitespace-pre-line leading-relaxed">{{ advice }}</p>
+    </div>
+
+    <div class="text-center mt-4 flex flex-col items-center gap-4">
+      <a href="/download_career_advice" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow">
+        ⬇️ Download Career Advice PDF
+      </a>
+
+      {% if advice_prompt %}
+      <form method="POST" action="/career-roadmap">
+        <input type="hidden" name="original_prompt" value="{{ advice_prompt }}">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow">
+          📍 View AI Roadmap
+        </button>
+      </form>
+      {% endif %}
+
+    </div>
+  {% endif %}
+
+  <a href="/" class="text-blue-500 underline mt-10 inline-block">← Back to Home</a>
+
+  <script>
+    const form = document.querySelector("form");
+    const button = document.getElementById("submitBtn");
+    const loadingText = document.getElementById("loading-text");
+
+    form.addEventListener("submit", () => {
+      button.disabled = true;
+      button.innerHTML = "⏳ Thinking...";
+      loadingText.classList.remove("hidden");
+    });
+
+    window.onload = function () {
+      const adviceBox = document.getElementById("ai-advice");
+      if (adviceBox) {
+        adviceBox.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+  </script>
+</body>
+</html>

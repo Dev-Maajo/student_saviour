@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Analysis Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 py-10 px-4">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
+    <h1 class="text-3xl font-bold text-blue-600 mb-4 text-center">✅ Resume Analysis Result</h1>
+
+    <!-- 🧮 Score -->
+    <div class="mb-6 text-center">
+      <h2 class="text-xl font-semibold mb-2">📊 Resume Score:</h2>
+      <div class="text-3xl font-bold text-green-600">{{ score }} / 10</div>
+    </div>
+
+    <!-- ❗ Missing -->
+    {% if missing_sections %}
+    <div class="mb-6 text-center">
+      <h2 class="text-xl font-semibold text-red-600 mb-2">⚠️ Missing Sections</h2>
+      <ul class="list-disc list-inside text-red-500">
+        {% for section in missing_sections %}
+        <li>{{ section }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- 📄 Resume -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">📄 Resume Text:</h2>
+      <div class="bg-gray-50 border rounded p-4 h-64 overflow-y-scroll text-sm whitespace-pre-wrap">
+        {{ resume_text }}
+      </div>
+    </div>
+
+    <!-- 💬 Feedback -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-2">🧠 AI Feedback:</h2>
+      {% for fb in feedback %}
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-2">
+        {{ fb }}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ✨ Suggestions -->
+    <div class="mb-6" id="suggestions-block">
+      <h2 class="text-xl font-bold text-green-600 mb-2">✨ Suggested Improvements</h2>
+
+      <!-- 📶 Progress Bar -->
+      <div id="loadingProgress" class="w-full bg-gray-200 rounded-full h-5 mb-4">
+        <div id="progressBar" class="bg-blue-600 h-5 rounded-full text-white text-sm text-center" style="width: 0%;">📶 0%</div>
+      </div>
+
+      <!-- 🦴 Skeleton Loader -->
+      <div id="loader" class="space-y-3">
+        {% for _ in range(3) %}
+        <div class="animate-pulse flex space-x-4 bg-gray-100 p-4 rounded shadow">
+          <div class="flex-1 space-y-2 py-1">
+            <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- 🧠 Injected Suggestions -->
+      <div id="suggestions-container" class="space-y-3 hidden"></div>
+    </div>
+
+    <!-- 📥 Download -->
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-500 mb-2">🧠 Tip: For best results, wait for AI suggestions to load before downloading!</p>
+      <a href="/download_feedback" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2">⬇️ Download Feedback PDF</a>
+      <a href="/resume_checker" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded">⬅️ Upload Another</a>
+    </div>
+  </div>
+
+  <!-- 🔁 Scripts -->
+  <script>
+    const loader = document.getElementById("loader");
+    const container = document.getElementById("suggestions-container");
+    const progressBar = document.getElementById("progressBar");
+
+    let progressInterval;
+
+    function updateProgressBar() {
+      fetch("/get_progress")
+        .then(res => res.json())
+        .then(data => {
+          const progress = data.progress;
+          progressBar.style.width = `${progress}%`;
+          progressBar.innerText = `📶 ${progress}%`;
+
+          if (progress >= 100) {
+            clearInterval(progressInterval);
+            fetchSuggestions();  // ⏳ Then show final suggestions
+          }
+        });
+    }
+
+    function fetchSuggestions() {
+      fetch("/get_final_suggestions")
+        .then(res => res.json())
+        .then(data => {
+          loader.style.display = "none";
+          container.classList.remove("hidden");
+
+          let html = "";
+          data.forEach(([original, improved]) => {
+            html += `
+              <div class="bg-white p-4 rounded shadow border">
+                <p><strong>❌ Original:</strong> ${original}</p>
+                <p><strong>✅ Improved:</strong> ${improved}</p>
+              </div>`;
+          });
+          container.innerHTML = html;
+        })
+        .catch(err => {
+          loader.innerHTML = "<p class='text-red-500'>❌ Failed to load suggestions.</p>";
+          console.error(err);
+        });
+    }
+
+    window.addEventListener("load", () => {
+      fetch("/get_suggestions");  // ⏱️ Trigger background suggestion generation
+      progressInterval = setInterval(updateProgressBar, 1000);  // Start polling progress
+    });
+  </script>
+</body>
+</html>

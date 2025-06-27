@@ -1,0 +1,87 @@
+<!-- templates/roadmap.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Career Roadmap</title>
+  <link href="/static/css/style.css" rel="stylesheet">
+  <style>
+    #loadingBarContainer {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 12px;
+      background-color: #3b82f6;
+      border-radius: 10px;
+      transition: width 0.3s ease-in-out;
+    }
+
+    #barBg {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .result-box {
+      margin-top: 30px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="p-8 font-sans bg-white text-black dark:bg-gray-900 dark:text-white">
+  <h1 class="text-3xl font-bold mb-4">📍 Career Roadmap Generator</h1>
+
+  <form id="roadmapForm" method="POST" action="/generate_roadmap">
+    <div class="grid gap-4 max-w-xl">
+      <input type="text" name="goal" placeholder="Your Career Goal (e.g., Become a Data Scientist)" class="p-2 rounded border" required>
+      <input type="text" name="level" placeholder="Current Skill Level (e.g., Beginner)" class="p-2 rounded border" required>
+      <input type="text" name="field" placeholder="Field of Interest (e.g., AI, Web Dev)" class="p-2 rounded border" required>
+      <button type="submit" class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600">Generate Roadmap</button>
+    </div>
+
+    <!-- Loading Spinner & Progress Bar -->
+    <div id="loadingBarContainer">
+      <div class="text-lg font-medium text-gray-600 dark:text-gray-300 mt-4">📶 Generating your roadmap...</div>
+      <div id="barBg">
+        <div id="progressBar"></div>
+      </div>
+    </div>
+  </form>
+
+  {% if roadmap %}
+  <div class="result-box">
+    <h2 class="text-xl font-semibold mb-2">🚀 Your Custom Roadmap:</h2>
+    <div>{{ roadmap | safe }}</div>
+  </div>
+  {% endif %}
+
+  <script>
+    const form = document.getElementById("roadmapForm");
+    const loadingBarContainer = document.getElementById("loadingBarContainer");
+    const progressBar = document.getElementById("progressBar");
+
+    form.addEventListener("submit", () => {
+      loadingBarContainer.style.display = "block";
+      progressBar.style.width = "0%";
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        if (progress < 95) {
+          progress += Math.random() * 4;
+          progressBar.style.width = progress + "%";
+        } else {
+          clearInterval(interval);
+        }
+      }, 250);
+    });
+  </script>
+</body>
+</html>
