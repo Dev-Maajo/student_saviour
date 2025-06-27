@@ -11,3 +11,4 @@ python-dotenv
 reportlab
 requests
 scikit-learn
+gunicorn
